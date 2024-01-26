@@ -85,7 +85,7 @@ def show_record(rcname, rcid, tablen, cursr, colindexmax, columns, db):
     for f in range(colindexmax):
         list.append(f" -{columns[f]}: {results[f]}")
     # Create a list of options for the user to perform on the record
-    list1=["Add new field","Delete this Record","Edit record", "Delete a Feild","Back"]
+    list1=["Add new field","Delete this Record","Edit record", "Delete a Feild","Export this record","Back"]
     # Create a title for the pick module, using the list of record fields
     title="\n".join(list)        #Info as a list for pick
     # Use the pick module to let the user select an option
@@ -102,6 +102,8 @@ def show_record(rcname, rcid, tablen, cursr, colindexmax, columns, db):
     # If the user chooses to delete a field, call the delete_field function
     if index==3:
         delete_field(tablen,cursr,columns)
+    if index==4:
+        export_record(rcname,columns,results,colindexmax)       
     # If the user chooses to go back, return True
     if len(list1)-1 == index:
         return True
@@ -259,6 +261,16 @@ def edit_record(tablen,cursr,columns,rcid,db):
         db.commit()
     # Return True
     return True
+
+def export_record(rcname,columns,results,colindexmax):    
+    out=f"\n\nDetails for the record {rcname}\n"
+    for f in range(colindexmax):
+        out=out+f"\n  -{columns[f]} : {results[f]}" #same implementation as list.append(f"-{columns[f]} : {results[f]}") and then joining it with "\n".join()
+    with open("export.txt","a+") as file:
+        file.write(out) #same as list.append(f"-{columns[f]} : {results[f]}") then file.writelines(list)   
+    print("Log : File Exported Successfully")
+    return True
+    
     
 def main(list1,Create):
     """Main function that handles the user interaction and database operations."""
